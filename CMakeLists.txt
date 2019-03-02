@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 14)
 include_directories(.)
 
 add_executable(FP
-        Convolution.h
+        Filter.h
         Image.cpp
         Image.h
         ImageIO.cpp

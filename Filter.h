@@ -8,7 +8,7 @@
 #include "Image.h"
 
 
-namespace Convolution {
+namespace Filter {
 
 template <class T>
 Matrix<T> Convolution(Image img, Kernel kernel);
@@ -24,7 +24,7 @@ Matrix<N> Add(Matrix<T> matrix1, Matrix<S> matrix2);
 };
 
 template <class T>
-Matrix<T> Convolution::Convolution(Image img, Kernel kernel) {
+Matrix<T> Filter::Convolution(Image img, Kernel kernel) {
 
 	uint32_t height = img.getHeight();
 	uint32_t width = img.getWidth();
@@ -88,7 +88,7 @@ Matrix<T> Convolution::Convolution(Image img, Kernel kernel) {
 }
 
 template<class N, class T>
-Matrix<N> Convolution::Normalize(Matrix<T> matrix) {
+Matrix<N> Filter::Normalize(Matrix<T> matrix) {
     int32_t normMin = std::numeric_limits<N>::min();
     int32_t normMax = std::numeric_limits<N>::max();
     int32_t normRange = normMax - normMin;
@@ -121,7 +121,7 @@ Matrix<N> Convolution::Normalize(Matrix<T> matrix) {
 
 
 template <class N, class T, class S>
-Matrix<N> Convolution::Subtract(Matrix<T> matrix1, Matrix<S> matrix2) {
+Matrix<N> Filter::Subtract(Matrix<T> matrix1, Matrix<S> matrix2) {
     
     if(matrix1.getHeight() != matrix2.getHeight()) {
         return Matrix<N>(0,0);
@@ -169,7 +169,7 @@ Matrix<N> Convolution::Subtract(Matrix<T> matrix1, Matrix<S> matrix2) {
 
 
 template <class N, class T, class S>
-Matrix<N> Convolution::Add(Matrix<T> matrix1, Matrix<S> matrix2) {
+Matrix<N> Filter::Add(Matrix<T> matrix1, Matrix<S> matrix2) {
 
     if (matrix1.getHeight() != matrix2.getHeight()) {
         return Matrix<N>(0, 0);

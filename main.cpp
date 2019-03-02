@@ -1,7 +1,7 @@
 #include <iostream>
 #include "Image.h"
 #include "ImageIO.h"
-#include "Convolution.h"
+#include "Filter.h"
 
 
 
@@ -50,19 +50,19 @@ int main(int argc, char **argv) {
 
 
 
-    Matrix<int16_t> blur = Convolution::Convolution<int16_t>(testImage, KernelGaussBlur);
-    Matrix<uint8_t> blurNo = Convolution::Normalize<uint8_t, int16_t>(blur);
+    Matrix<int16_t> blur = Filter::Convolution<int16_t>(testImage, KernelGaussBlur);
+    Matrix<uint8_t> blurNo = Filter::Normalize<uint8_t, int16_t>(blur);
     ImageWrite::pgm(blurNo, "101_1_BLUR.pgm");
 
 
-    Matrix<int16_t> sub = Convolution::Subtract<int16_t, uint8_t, uint8_t>(testImage, blurNo);
+    Matrix<int16_t> sub = Filter::Subtract<int16_t, uint8_t, uint8_t>(testImage, blurNo);
 
-    Matrix<uint8_t> subNo = Convolution::Normalize<uint8_t, int16_t>(sub);
+    Matrix<uint8_t> subNo = Filter::Normalize<uint8_t, int16_t>(sub);
     ImageWrite::pgm(subNo, "101_1_SUB.pgm");
 
 
-    Matrix<uint16_t> final = Convolution::Add<uint16_t, uint8_t, int16_t>(testImage, sub);
-    Matrix<uint8_t> FinalNo = Convolution::Normalize<uint8_t, uint16_t>(final);
+    Matrix<uint16_t> final = Filter::Add<uint16_t, uint8_t, int16_t>(testImage, sub);
+    Matrix<uint8_t> FinalNo = Filter::Normalize<uint8_t, uint16_t>(final);
     ImageWrite::pgm(FinalNo, "101_1_FINAL.pgm");
 
 
