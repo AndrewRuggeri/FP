@@ -3,6 +3,8 @@
 
 #include <iostream>
 #include <limits>
+#include <vector>
+#include <algorithm>
 #include "Matrix.h"
 #include "Kernel.h"
 #include "Image.h"
@@ -12,6 +14,9 @@ namespace Filter {
 
 template <class T>
 Matrix<T> Convolution(Image img, Kernel kernel);
+
+template<class T>
+Matrix<T> Median(Matrix<T> matrix);
 
 template <class N, class T>
 Matrix<N> Normalize(Matrix<T> matrix);
@@ -86,6 +91,58 @@ Matrix<T> Filter::Convolution(Image img, Kernel kernel) {
 
 	return convMatrix;
 }
+
+
+template<class T>
+Matrix<T> Filter::Median(Matrix<T> matrix) {
+
+    int32_t width = matrix.getWidth();
+    int32_t height = matrix.getHeight();
+
+    Matrix<T> median(width, height);
+    T min = std::numeric_limits<T>::max();
+    T max = std::numeric_limits<T>::min();
+    T* medianData = median.getData();
+
+    int32_t pos = 0;
+    for(int y = 0; y < height; y++) {
+        for(int x = 0; x < width; x++) {
+
+            std::vector<T> list;
+
+            // Shift around the Window [3x3] from -1 <> 1
+            for(int wx = -1; wx <= 1; wx++) {
+                for(int wy = -1; wy <= 1; wy++) {
+                    int xNeig = x + wx; // Get the X Neighbor
+                    int yNeig = y + wy; // Get the Y Neighbor
+
+                    if (xNeig >= 0 && xNeig < matrix.getWidth() &&
+                        yNeig >= 0 && yNeig < matrix.getHeight()) {
+                        list.push_back(matrix.getValue(xNeig, yNeig));  // TODO: remove extra call, do calc local
+                    }
+
+                }
+            }
+
+            std::sort(list.begin(), list.end());
+            medianData[pos] = list[3]; // Not a *true* median but ok, and fast.
+
+            // Get max and min
+            if (medianData[pos] > max)
+                max = medianData[pos];
+            if (medianData[pos] < min)
+                min = medianData[pos];
+
+            pos++;
+        }
+    }
+
+    median.setMin(min);
+    median.setMax(max);
+
+    return median;
+}
+
 
 template<class N, class T>
 Matrix<N> Filter::Normalize(Matrix<T> matrix) {
