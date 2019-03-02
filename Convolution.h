@@ -103,6 +103,8 @@ Matrix<N> Convolution::Normalize(Matrix<T> matrix) {
     
     
     Matrix<N> norm(matrix.getWidth(), matrix.getHeight());
+    norm.setMin(normMin);
+    norm.setMax(normMax);
     
     T* inputData = (T*)matrix.getData();
     N* outputData = (N*)norm.getData();
@@ -131,17 +133,27 @@ Matrix<N> Convolution::Subtract(Matrix<T> matrix1, Matrix<S> matrix2) {
     
     
     Matrix<N> output(matrix1.getWidth(), matrix1.getHeight());
+    N minValue = std::numeric_limits<N>::min();
+    N maxValue = std::numeric_limits<N>::max();
 
     N* outputData = output.getData();
     T* m1Data = matrix1.getData();
     S* m2Data = matrix2.getData();
 
-    N max = 0;
-    N min = 0;
+    N max = minValue;
+    N min = maxValue;
 
     uint32_t size = matrix1.getWidth() * matrix1.getHeight();
+    int32_t tempValue = 0;
     for (int i = 0; i < size; i++) {
-        outputData[i] = m1Data[i] - m2Data[i];
+        tempValue = m1Data[i] - m2Data[i];
+        outputData[i] = tempValue;
+
+        if(tempValue > maxValue)
+            outputData[i] = maxValue;
+
+        if(tempValue < minValue)
+            outputData[i] = minValue;
 
         // Get max and min
         if (outputData[i] > max)
@@ -167,20 +179,28 @@ Matrix<N> Convolution::Add(Matrix<T> matrix1, Matrix<S> matrix2) {
         return Matrix<N>(0, 0);
     }
 
-
     Matrix<N> output(matrix1.getWidth(), matrix1.getHeight());
+    N minValue = std::numeric_limits<N>::min();
+    N maxValue = std::numeric_limits<N>::max();
 
     N* outputData = output.getData();
     T* m1Data = matrix1.getData();
     S* m2Data = matrix2.getData();
 
-
-    N max = 0;
-    N min = 0;
+    N max = minValue;
+    N min = maxValue;
 
     uint32_t size = matrix1.getWidth() * matrix1.getHeight();
+    int32_t tempValue = 0;
     for (int i = 0; i < size; i++) {
-        outputData[i] = m1Data[i] + m2Data[i];
+        tempValue = m1Data[i] + m2Data[i];
+        outputData[i] = tempValue;
+
+        if(tempValue > maxValue)
+            outputData[i] = maxValue;
+
+        if(tempValue < minValue)
+            outputData[i] = minValue;
 
         // Get max and min
         if (outputData[i] > max)

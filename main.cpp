@@ -16,7 +16,7 @@
 int main(int argc, char **argv) {
     std::cout << "Hello, world!" << std::endl;
     
-    char* path = "/home/stumpy/projects/NBIS/FVC/pgm/101_1.pgm";
+    char* path = "101_1.pgm";
     Image testImage = ImageRead::pgm(path);
     
     
@@ -52,18 +52,18 @@ int main(int argc, char **argv) {
 
     Matrix<int16_t> blur = Convolution::Convolution<int16_t>(testImage, KernelGaussBlur);
     Matrix<uint8_t> blurNo = Convolution::Normalize<uint8_t, int16_t>(blur);
-    ImageWrite::pgm(blurNo, "/home/stumpy/projects/NBIS/FVC/pgm/101_1_BLUR.pgm");
+    ImageWrite::pgm(blurNo, "101_1_BLUR.pgm");
 
 
-    Matrix<int16_t> sub = Convolution::Subtract<int16_t, uint8_t, int16_t>(testImage, blur);
+    Matrix<int16_t> sub = Convolution::Subtract<int16_t, uint8_t, uint8_t>(testImage, blurNo);
 
     Matrix<uint8_t> subNo = Convolution::Normalize<uint8_t, int16_t>(sub);
-    ImageWrite::pgm(subNo, "/home/stumpy/projects/NBIS/FVC/pgm/101_1_SUB.pgm");
+    ImageWrite::pgm(subNo, "101_1_SUB.pgm");
 
 
-    Matrix<int16_t> final = Convolution::Add<int16_t, uint8_t, int16_t>(testImage, sub);
-    Matrix<uint8_t> FinalNo = Convolution::Normalize<uint8_t, int16_t>(final);
-    ImageWrite::pgm(FinalNo, "/home/stumpy/projects/NBIS/FVC/pgm/101_1_FINAL.pgm");
+    Matrix<uint16_t> final = Convolution::Add<uint16_t, uint8_t, int16_t>(testImage, sub);
+    Matrix<uint8_t> FinalNo = Convolution::Normalize<uint8_t, uint16_t>(final);
+    ImageWrite::pgm(FinalNo, "101_1_FINAL.pgm");
 
 
     
