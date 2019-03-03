@@ -12,8 +12,8 @@
 
 namespace Filter {
 
-template <class T>
-Matrix<T> Convolution(Image img, Kernel kernel);
+template <class N, class T>
+Matrix<N> Convolution(Matrix<T> img, Kernel kernel);
 
 template<class T>
 Matrix<T> Median(Matrix<T> matrix);
@@ -21,24 +21,35 @@ Matrix<T> Median(Matrix<T> matrix);
 template <class N, class T>
 Matrix<N> Normalize(Matrix<T> matrix);
 
+
 template <class N, class T, class S>
 Matrix<N> Subtract(Matrix<T> matrix1, Matrix<S> matrix2);
 
 template <class N, class T, class S>
+Matrix<N> Subtract(Matrix<T> matrix1, Matrix<S> matrix2, N minValue, N maxValue);
+
+
+
+template <class N, class T, class S>
 Matrix<N> Add(Matrix<T> matrix1, Matrix<S> matrix2);
+
+
+template <class N, class T, class S>
+Matrix<N> Add(Matrix<T> matrix1, Matrix<S> matrix2, N minValue, N maxValue);
+
 };
 
-template <class T>
-Matrix<T> Filter::Convolution(Image img, Kernel kernel) {
+template <class N, class T>
+Matrix<N> Filter::Convolution(Matrix<T> img, Kernel kernel) {
 
 	uint32_t height = img.getHeight();
 	uint32_t width = img.getWidth();
 
 	uint32_t imageIndex = 0;
-	Matrix<T> convMatrix(width, height);
-	T* outputData = convMatrix.getData();
-	T maxValue = 0;
-	T minValue = 0;
+	Matrix<N> convMatrix(width, height);
+	N* outputData = convMatrix.getData();
+	N maxValue = 0;
+	N minValue = 0;
 
 
 	// find center position of kernel (half of kernel size)
@@ -74,7 +85,7 @@ Matrix<T> Filter::Convolution(Image img, Kernel kernel) {
 					}
 				}
 			}
-			// Detect potentail max an dmin
+			// Detect max and min
 			if (minValue > outputData[imageIndex])
 				minValue = outputData[imageIndex];
 			if (maxValue < outputData[imageIndex])
@@ -125,7 +136,13 @@ Matrix<T> Filter::Median(Matrix<T> matrix) {
             }
 
             std::sort(list.begin(), list.end());
-            medianData[pos] = list[3]; // Not a *true* median but ok, and fast.
+
+
+            // Not a *true* median but ok, and fast.
+            if(list.size() > 4)
+                medianData[pos] = list[4];
+            else
+                medianData[pos] = list[3];
 
             // Get max and min
             if (medianData[pos] > max)
@@ -179,19 +196,22 @@ Matrix<N> Filter::Normalize(Matrix<T> matrix) {
 
 template <class N, class T, class S>
 Matrix<N> Filter::Subtract(Matrix<T> matrix1, Matrix<S> matrix2) {
-    
+    return Subtract<N,T,S>(matrix1, matrix2, std::numeric_limits<N>::min(), std::numeric_limits<N>::max());
+}
+
+template <class N, class T, class S>
+Matrix<N> Filter::Subtract(Matrix<T> matrix1, Matrix<S> matrix2, N minValue, N maxValue) {
+
     if(matrix1.getHeight() != matrix2.getHeight()) {
         return Matrix<N>(0,0);
     }
-    
+
     if(matrix1.getWidth() != matrix2.getWidth()) {
         return Matrix<N>(0,0);
-    }    
-    
-    
+    }
+
+
     Matrix<N> output(matrix1.getWidth(), matrix1.getHeight());
-    N minValue = std::numeric_limits<N>::min();
-    N maxValue = std::numeric_limits<N>::max();
 
     N* outputData = output.getData();
     T* m1Data = matrix1.getData();
@@ -227,7 +247,11 @@ Matrix<N> Filter::Subtract(Matrix<T> matrix1, Matrix<S> matrix2) {
 
 template <class N, class T, class S>
 Matrix<N> Filter::Add(Matrix<T> matrix1, Matrix<S> matrix2) {
+    return Add<N,T,S>(matrix1, matrix2, std::numeric_limits<N>::min(), std::numeric_limits<N>::max());
+}
 
+template <class N, class T, class S>
+Matrix<N> Filter::Add(Matrix<T> matrix1, Matrix<S> matrix2, N minValue, N maxValue) {
     if (matrix1.getHeight() != matrix2.getHeight()) {
         return Matrix<N>(0, 0);
     }
@@ -237,8 +261,6 @@ Matrix<N> Filter::Add(Matrix<T> matrix1, Matrix<S> matrix2) {
     }
 
     Matrix<N> output(matrix1.getWidth(), matrix1.getHeight());
-    N minValue = std::numeric_limits<N>::min();
-    N maxValue = std::numeric_limits<N>::max();
 
     N* outputData = output.getData();
     T* m1Data = matrix1.getData();
@@ -270,7 +292,6 @@ Matrix<N> Filter::Add(Matrix<T> matrix1, Matrix<S> matrix2) {
     output.setMax(max);
     return output;
 }
-
 
 
 #endif
