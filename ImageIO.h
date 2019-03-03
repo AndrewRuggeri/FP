@@ -14,7 +14,7 @@ namespace ImageRead {
     * @param path directory path to file
     * @return Image Image returned, will be empty image if error
     */
-    Image pgm(char* path);
+    Image pgm(const char* path);
 };
 
 

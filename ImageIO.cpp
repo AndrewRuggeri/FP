@@ -8,7 +8,7 @@ uint8_t imageFileData[FILE_IMAGE_SIZE];      // pre-allocate 200KB of memory
 
 
 
-Image ImageRead::pgm(char* path) {
+Image ImageRead::pgm(const char* path) {
     FILE* file;
     
     // Open file
