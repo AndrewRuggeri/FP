@@ -7,6 +7,7 @@
 #include "ImageIO.h"
 #include "Filter.h"
 #include "FilterChain.h"
+#include "log.h"
 
 
 
@@ -33,14 +34,14 @@ std::vector<std::string> GetPGMfiles(char* path){
             }
         }
     } else {
-        logging::error("failed to open directory");
+        LOG_ERROR("failed to open directory");
     }
 
     return fileList;
 }
 
 int main(int argc, char* argv[]) {
-    std::cout << "Hello, world!" << std::endl;
+    LOG_INFO("Hello world!");
 
     char* inputPath = nullptr;
     char* outputPath = nullptr;
@@ -48,7 +49,7 @@ int main(int argc, char* argv[]) {
 
     // Filter Arguments
     for(int i = 1; i < argc; i++) {
-        std::cout << i << " " << argv[i] << std::endl;
+        LOG_DEBUG( i << " " << argv[i]);
         if(strcmp("-od", argv[i]) == 0) {
             outputPath = argv[++i];
             continue;

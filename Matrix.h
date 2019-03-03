@@ -112,7 +112,7 @@ Matrix<T>::Matrix(uint32_t width_, uint32_t height_) {
 	// Allocate memory for data
 	data = (uint8_t*)malloc(dataSize);
 	if (data == nullptr) {
-		logging::error("nullpointer retured from malloc");
+		LOG_ERROR("nullpointer retured from malloc");
 	}
 
 	// init data to 0
@@ -131,10 +131,7 @@ T Matrix<T>::getValue(uint32_t x, uint32_t y, bool* success) {
 		value = tempDataPtr[pos];
 		*success = true;
 	} else {
-        char line[128] = {0};
-        snprintf(line, 128, "pos: X %d, Y %d = %d, of datasize %d", x, y, pos, dataSize);
-		std::cout << "X: " << width << ", Y: " << height << "  " ;
-		logging::warning(line);
+		LOG_WARNING("Pos: " << x << ", " << y << " index: " << pos << ", out of range for size " << dataSize);
 	}
 
 	return value;

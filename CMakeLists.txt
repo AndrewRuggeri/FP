@@ -1,11 +1,17 @@
 cmake_minimum_required(VERSION 3.8)
 project(FP)
+message("Cmaking FP")
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 11)
+set(CXX_COVERAGE_COMPILE_FLAGS "-funroll -Ofast")
+
+# LOG MACROS
+add_definitions(-DLOG_INFO_ON)
+add_definitions(-DLOG_WARNING_ON)
+add_definitions(-DLOG_DEBUG_ON)
+add_definitions(-DLOG_ERROR_ON)
 
 include_directories(.)
-
-set(CXX_COVERAGE_COMPILE_FLAGS "-funroll -Ofast")
 
 add_executable(FP
         Filter.h
@@ -15,7 +21,6 @@ add_executable(FP
         ImageIO.cpp
         ImageIO.h
         Kernel.h
-        log.cpp
         log.h
         main.cpp
         Matrix.h)

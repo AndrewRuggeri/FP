@@ -14,7 +14,7 @@ Image ImageRead::pgm(const char* path) {
     // Open file
     file = fopen(path, "r");
     if(file == nullptr) {
-        logging::error("Failed to open file");
+        LOG_ERROR("Failed to open file");
         return Image(0,0);
     }
     
@@ -40,12 +40,12 @@ Image ImageRead::pgm(const char* path) {
     if(fseek(file, 0L, SEEK_END) == 0) {
         fileSize = ftell(file);
         if(fileSize == -1) {
-            logging::error("Failed to find file end");
+            LOG_ERROR("Failed to find file end");
             return Image(0,0);
         }
         
         if(fileSize > FILE_IMAGE_SIZE) {
-            logging::error("File Image buffer is not large enough");
+            LOG_ERROR("File Image buffer is not large enough");
             return Image(0,0);
             
         }
@@ -58,7 +58,7 @@ Image ImageRead::pgm(const char* path) {
     // Read in file
     size_t size = fread(imageFileData, 1, fileSize, file);
     if(ferror(file) != 0) {
-        logging::error("Failed to read image");
+        LOG_ERROR("Failed to read image");
         return Image(0,0);
     }
     
