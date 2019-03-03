@@ -11,6 +11,21 @@ namespace FilterChain {
 
 }
 
+//int8_t emboss[] = {-2, -1, 0, -1, 1, 1, 0, 1, 2};
+//Kernel KernelEmboss(3,3);
+//KernelEmboss.setValue((uint8_t*)&emboss[0]);
+//
+//int8_t edge[] = {0, 1, 0, 1, -4, 1, 0, 1, 0};
+//Kernel KernelEdge(3,3);
+//KernelEdge.setValue((uint8_t*)&edge[0]);
+
+//    int8_t gaus[] = { 1,  4,  7,  4,  1,
+//                      4, 16, 26, 16,  4,
+//                      7, 26, 41, 26,  7,
+//                      4, 16, 26, 16,  4,
+//                      1,  4,  7,  4,  1};
+//    Kernel KernelGaussBlur(5, 5);
+//    KernelGaussBlur.setValue((uint8_t*)&gaus[0]);
 
 Matrix<uint8_t> FilterChain::Unsharpen(Image image) {
 
