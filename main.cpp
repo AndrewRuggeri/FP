@@ -1,5 +1,9 @@
 #include <iostream>
 #include <limits>
+//#include <filesystem> C++ 17 not supported
+#include <dirent.h>
+#include <vector>
+#include <string>
 #include "ImageIO.h"
 #include "Filter.h"
 #include "FilterChain.h"
@@ -8,45 +12,98 @@
 
 
 
+// TODO: fill in with text
+void helpMessage() {
+    std::cout << "yadda yadda" << std::endl;
+}
 
-int main(int argc, char **argv) {
+
+std::vector<std::string> GetPGMfiles(char* path){
+    std::vector<std::string> fileList;
+
+    struct dirent* ent;
+    DIR* dir = opendir(path);
+    if(dir != nullptr) {
+        while((ent = readdir(dir)) != nullptr){
+            if(ent->d_type == DT_REG ) {
+                std::string filePath(ent->d_name);
+                if(filePath.compare(ent->d_namlen - 3, 3, "pgm") == 0)
+                    fileList.push_back(filePath);
+
+            }
+        }
+    } else {
+        logging::error("failed to open directory");
+    }
+
+    return fileList;
+}
+
+int main(int argc, char* argv[]) {
     std::cout << "Hello, world!" << std::endl;
-    
-    char* path = "101_1.pgm";
-    Image testImage = ImageRead::pgm(path);
-    
 
-    
-    int8_t emboss[] = {-2, -1, 0, -1, 1, 1, 0, 1, 2};
-    Kernel KernelEmboss(3,3);
-    KernelEmboss.setValue((uint8_t*)&emboss[0]);
-    
-    int8_t edge[] = {0, 1, 0, 1, -4, 1, 0, 1, 0};
-    Kernel KernelEdge(3,3);
-    KernelEdge.setValue((uint8_t*)&edge[0]);
+    char* inputPath = nullptr;
+    char* outputPath = nullptr;
+    bool process = true;
 
-//    int8_t gaus[] = { 1,  2,  1,
-//                      2,  4,  2,
-//                      1,  2,  1 };
-//    Kernel KernelGaussBlur(3, 3);
-//    KernelGaussBlur.setValue((uint8_t*)&gaus[0]);
+    // Filter Arguments
+    for(int i = 1; i < argc; i++) {
+        std::cout << i << " " << argv[i] << std::endl;
+        if(strcmp("-od", argv[i]) == 0) {
+            outputPath = argv[++i];
+            continue;
+        }
 
+        if(strcmp("-id", argv[i]) == 0) {
+            inputPath = argv[++i];
+            continue;
+        }
 
-//    int8_t gaus[] = { 1,  4,  7,  4,  1,
-//                      4, 16, 26, 16,  4,
-//                      7, 26, 41, 26,  7,
-//                      4, 16, 26, 16,  4,
-//                      1,  4,  7,  4,  1};
-//    Kernel KernelGaussBlur(5, 5);
-//    KernelGaussBlur.setValue((uint8_t*)&gaus[0]);
-
-    int8_t inv[] = { -1 };
-    Kernel KernelInvert(1, 1);
-    KernelInvert.setValue((uint8_t*)&inv[0]);
+        if(strcmp("-n", argv[i]) == 0) {
+            process = false;
+            continue;
+        }
+    }
 
 
-    Matrix<uint8_t> finalNo = FilterChain::Unsharpen(testImage);
-    ImageWrite::pgm(finalNo, "101_1_FINAL.pgm");
+    // check input path validity
+    std::vector<std::string> fileList;
+    if(inputPath != nullptr) {
+        fileList = GetPGMfiles(inputPath);
+    } else {
+        helpMessage();
+        return 1;
+    }
+
+
+    // check output path validity
+    if(outputPath != nullptr) {
+
+    } else {
+        helpMessage();
+        return 1;
+    }
+
+    // Process
+    if(process) {
+        for(auto file : fileList){
+            std::string fileInputPath(inputPath);
+            fileInputPath.append(file);
+            Image image = ImageRead::pgm(fileInputPath.c_str());
+        }
+    }
+
+    // writeout pgm files
+
+
+
+//    char* path = "101_1.pgm";
+//    Image testImage = ImageRead::pgm(path);
+//
+//
+//
+//    Matrix<uint8_t> finalNo = FilterChain::Unsharpen(testImage);
+//    ImageWrite::pgm(finalNo, "101_1_FINAL.pgm");
 
 
     
