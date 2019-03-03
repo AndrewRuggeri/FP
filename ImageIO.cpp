@@ -13,7 +13,7 @@ Image ImageRead::pgm(char* path) {
     
     // Open file
     file = fopen(path, "r");
-    if(file == NULL) {
+    if(file == nullptr) {
         logging::error("Failed to open file");
         return Image(0,0);
     }
@@ -76,18 +76,18 @@ Image ImageRead::pgm(char* path) {
 }
 
 
-void ImageWrite::pgm(Image image, char* path) {
-    
-    FILE* file;
-    
-    file = fopen(path, "wb");
-    
-    fprintf(file, "P5 ");
-    fprintf(file, "%d %d 255 ", image.getWidth(), image.getHeight());
-    
-    long size = image.getHeight() * image.getWidth();
-    fwrite(image.getData(), 1, size, file);
-    
-    fclose(file);
-    
-}
+//void ImageWrite::pgm(Image image, char* path) {
+//
+//    FILE* file;
+//
+//    file = fopen(path, "wb");
+//
+//    fprintf(file, "P5 ");
+//    fprintf(file, "%d %d 255 ", image.getWidth(), image.getHeight());
+//
+//    long size = image.getHeight() * image.getWidth();
+//    fwrite(image.getData(), 1, size, file);
+//
+//    fclose(file);
+//
+//}

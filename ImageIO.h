@@ -23,7 +23,7 @@ namespace ImageWrite {
     template <class T>
     void pgm(Matrix<T> matrix, char* path);
     
-    void pgm(Image image, char* path);
+    //void pgm(Image image, char* path);
 };
 
 
