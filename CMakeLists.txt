@@ -13,7 +13,7 @@ add_definitions(-DLOG_ERROR_ON)
 
 include_directories(.)
 
-add_executable(FP
+set(SOURCE
         Filter.h
         FilterChain.h
         Image.cpp
@@ -22,5 +22,14 @@ add_executable(FP
         ImageIO.h
         Kernel.h
         log.h
-        main.cpp
         Matrix.h)
+
+# main executable
+add_executable(FP
+        main.cpp
+        ${SOURCE})
+
+# executable to test filters
+add_executable(testFilters
+        FilterTestMain.cpp
+        ${SOURCE})
