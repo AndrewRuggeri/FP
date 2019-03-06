@@ -86,26 +86,25 @@ int main(int argc, char* argv[]) {
     }
 
     // Process
-    if(process) {
-        for(auto file : fileList){
-            std::string fileInputPath(inputPath);
-            fileInputPath.append(file);
-            Image image = ImageRead::pgm(fileInputPath.c_str());
+    for(auto file : fileList){
+        std::string fileInputPath(inputPath);
+        fileInputPath.append(file);
+
+        std::string fileOutputpath(outputPath);
+        fileOutputpath.append(file);
+
+        Image image = ImageRead::pgm(fileInputPath.c_str());
+
+        // if we want to process all the images
+        if(process) {
+            Matrix<uint8_t> sharpen = FilterChain::Unsharpen(image);
+            ImageWrite::pgm(sharpen, fileOutputpath.c_str());
+
+        // else if we want a IO benchmark/baseline
+        } else {
+            ImageWrite::pgm(image, fileOutputpath.c_str());
         }
     }
-
-    // writeout pgm files
-
-
-
-//    char* path = "101_1.pgm";
-//    Image testImage = ImageRead::pgm(path);
-//
-//
-//
-//    Matrix<uint8_t> finalNo = FilterChain::Unsharpen(testImage);
-//    ImageWrite::pgm(finalNo, "101_1_FINAL.pgm");
-
 
     
     std::cout << std::endl << "Et Fin." << std::endl;

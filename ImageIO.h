@@ -21,14 +21,14 @@ namespace ImageRead {
 namespace ImageWrite {
     
     template <class T>
-    void pgm(Matrix<T> matrix, char* path);
+    void pgm(Matrix<T> matrix, const char* path);
     
     //void pgm(Image image, char* path);
 };
 
 
 template <class T>
-void ImageWrite::pgm(Matrix<T> matrix, char* path) {
+void ImageWrite::pgm(Matrix<T> matrix, const char* path) {
     FILE* file;
     
     file = fopen(path, "wb");
