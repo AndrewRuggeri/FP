@@ -11,11 +11,13 @@
 
 
 
-
-
-// TODO: fill in with text
 void helpMessage() {
-    std::cout << "yadda yadda" << std::endl;
+    std::cout << "Command line arguments" << std::endl;
+    std::cout << std::endl;
+    std::cout << " -in <dir>    : input file directory" << std::endl;
+    std::cout << " -od <dir>    : output file directory" << std::endl;
+    std::cout << " -n           : nominal IO test" << std::endl;
+    std::cout << std::endl;
 }
 
 
@@ -41,7 +43,8 @@ std::vector<std::string> GetPGMfiles(char* path){
 }
 
 int main(int argc, char* argv[]) {
-    LOG_INFO("Hello world!");
+    LOG_DEBUG("Hello world!");
+    LOG_INFO("Fingerprint Enhancer!");
 
     char* inputPath = nullptr;
     char* outputPath = nullptr;
@@ -63,6 +66,11 @@ int main(int argc, char* argv[]) {
         if(strcmp("-n", argv[i]) == 0) {
             process = false;
             continue;
+        }
+
+        if(strcmp("-h", argv[i]) == 0) {
+            helpMessage();
+            return 0;
         }
     }
 
