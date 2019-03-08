@@ -41,9 +41,11 @@ set(SOURCE
         Matrix.h)
 
 # main executable
-add_executable(FP
-        main.cpp
-        ${SOURCE})
+if(NOT WIN32)	# main.cpp uses posix calls/headers
+	add_executable(FP
+			main.cpp
+			${SOURCE})
+endif()
 
 # executable to test filters
 add_executable(testFilters

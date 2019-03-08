@@ -36,7 +36,7 @@ Image ImageRead::pgm(const char* path) {
     
     // Get File size
     // Go to file end, get end position for size/length
-    ssize_t fileSize = 0;
+    size_t fileSize = 0;
     if(fseek(file, 0L, SEEK_END) == 0) {
         fileSize = ftell(file);
         if(fileSize == -1) {
