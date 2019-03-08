@@ -2,8 +2,24 @@ cmake_minimum_required(VERSION 3.8)
 project(FP)
 message("Cmaking FP")
 
+
+# Set build flags for building with ARM
+option(ARMBUILD "ARMBUILD" OFF)
+
+
+# Set architecture specific build flags
+if(ARMBUILD)
+    message("Building for ARM")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mfloat-abi=hard -mcpu=cortex-a15 -fipa-pta")
+else()
+    message("Building for AMD64")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -m64")
+endif()
+
+
 set(CMAKE_CXX_STANDARD 11)
-set(CXX_COVERAGE_COMPILE_FLAGS "-funroll -Ofast")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -funroll-loops -Ofast -fvariable-expansion-in-unroller")
+
 
 # LOG MACROS
 add_definitions(-DLOG_INFO_ON)
