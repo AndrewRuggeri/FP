@@ -28,7 +28,7 @@ std::vector<std::string> GetPGMfiles(char* path){
         while((ent = readdir(dir)) != nullptr){
             if(ent->d_type == DT_REG ) {
                 std::string filePath(ent->d_name);
-                if(filePath.compare(ent->d_namlen - 3, 3, "pgm") == 0)
+                if(filePath.compare(strlen(ent->d_name) - 3, 3, "pgm") == 0)
                     fileList.push_back(filePath);
 
             }
