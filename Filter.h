@@ -5,6 +5,7 @@
 #include <limits>
 #include <vector>
 #include <algorithm>
+#include <cmath>
 #include "Matrix.h"
 #include "Kernel.h"
 #include "Image.h"
@@ -21,13 +22,18 @@ namespace Filter {
 	template <class N, class T>
 	Matrix<N> Normalize(Matrix<T> matrix);
 
+	template <class N, class T>
+	Matrix<N> NormalizeSTD(Matrix<T> matrix);
+
+	template <class N, class T>
+	Matrix<N> NormalizePercent(Matrix<T> matrix);
+
 
 	template <class N, class T, class S>
 	Matrix<N> Subtract(Matrix<T> matrix1, Matrix<S> matrix2);
 
 	template <class N, class T, class S>
 	Matrix<N> Subtract(Matrix<T> matrix1, Matrix<S> matrix2, N minValue, N maxValue);
-
 
 
 	template <class N, class T, class S>
@@ -176,7 +182,7 @@ Matrix<N> Filter::Normalize(Matrix<T> matrix) {
 	int32_t inRange = inMax - inMin;
 
 	float adjValue = (float)normRange / (float)inRange;
-	uint32_t shiftValue = normMin - inMin;
+	int32_t shiftValue = normMin - inMin;
 
 
 	Matrix<N> norm(matrix.getWidth(), matrix.getHeight());
@@ -189,7 +195,123 @@ Matrix<N> Filter::Normalize(Matrix<T> matrix) {
 	uint32_t size = matrix.getHeight() * matrix.getWidth();
 
 	for (int i = 0; i < size; i++) {
-		outputData[i] = (inputData[i] + shiftValue) * adjValue;
+		//outputData[i] = (inputData[i] + shiftValue) * adjValue;
+
+			float temp = (inputData[i] + shiftValue) * adjValue;
+
+			if(temp < normMin)
+				outputData[i] = normMin;
+			else if(temp > normMax)
+				outputData[i] = normMax;
+			else
+				outputData[i] = temp;
+
+	}
+
+
+	return norm;
+}
+
+
+template<class N, class T>
+Matrix<N> Filter::NormalizeSTD(Matrix<T> matrix) {
+
+    uint32_t elementCount = matrix.getHeight() * matrix.getWidth();
+    Matrix<float> norm(matrix.getWidth(), matrix.getHeight());
+    float* shiftedData = norm.getData();
+
+    // Calculate Average/Mean
+    int32_t sum = 0.0;
+    T* matrixPtr = matrix.getData();
+    for(int i = 0; i < elementCount; i++) {
+        sum += matrixPtr[i];
+    }
+    float mean = (float)sum/(float)elementCount;
+
+
+    // Adjust data by mean
+    for(int i = 0; i < elementCount; i++) {
+        shiftedData[i] = matrixPtr[i] - mean;
+    }
+
+    // Calculate Average/Mean
+    sum = 0.0;
+    for(int i = 0; i < elementCount; i++) {
+        sum += shiftedData[i];
+    }
+    float adjMean = (float)sum/(float)elementCount;
+
+
+    // Calculate ST Deviation
+    double std = 0;
+    for(int i = 0; i < elementCount; i++) {
+        float value = shiftedData[i];
+        double dev = std::pow((value - adjMean),2);
+        std += dev;
+    }
+    float var = std/(elementCount-1);
+    float dev = std::sqrt(var);
+
+
+    float min = std::numeric_limits<float>::max();
+    float max = std::numeric_limits<float>::min();
+    for(int i = 0; i < elementCount; i++) {
+        shiftedData[i] = (shiftedData[i] / dev);
+
+        // Get max and min
+        if (shiftedData[i] > max)
+            max = shiftedData[i];
+        if (shiftedData[i] < min)
+            min = shiftedData[i];
+    }
+
+
+    norm.setMin(min);
+    norm.setMax(max);
+
+
+    return Normalize<N, float>(norm);
+}
+
+
+template <class N, class T>
+Matrix<N> Filter::NormalizePercent(Matrix<T> matrix) {
+	uint32_t size = matrix.getWidth() * matrix.getHeight();
+	std::vector<T> reorgData(size);
+	memcpy(&reorgData[0], matrix.getData(), (size  * sizeof(T)));
+
+	std::sort(reorgData.begin(), reorgData.end());
+	uint32_t offset = size * .03; // cut off 3%, this is offset
+
+
+	int32_t normMin = std::numeric_limits<N>::min();
+	int32_t normMax = std::numeric_limits<N>::max();
+	int32_t normRange = normMax - normMin;
+
+	T inMax = reorgData[size - offset];
+	T inMin = reorgData[offset];
+	int32_t inRange = inMax - inMin;
+
+	float adjValue = (float)normRange / (float)inRange;
+	int32_t shiftValue = normMin - inMin;
+
+
+	Matrix<N> norm(matrix.getWidth(), matrix.getHeight());
+	norm.setMin(normMin);
+	norm.setMax(normMax);
+
+	T* inputData = (T*)matrix.getData();
+	N* outputData = (N*)norm.getData();
+
+	for (int i = 0; i < size; i++) {
+		float temp = (inputData[i] + shiftValue) * adjValue;
+
+		if(temp < normMin)
+			outputData[i] = normMin;
+		else if(temp > normMax)
+			outputData[i] = normMax;
+		else
+			outputData[i] = temp;
 	}
 
 
