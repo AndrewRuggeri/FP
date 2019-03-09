@@ -11,5 +11,5 @@ echo "Converting files in ${1}"
 for file in ${1}/*.*; do
     imgInfo=$(identify -format "%[fx:w],%[fx:h],%[bit-depth]" "${file}")
     echo " File: ${file} : ${imgInfo}"
-    cwsq .75 wsq ${file} -r ${imgInfo}
+    cwsq 2.25 wsq ${file} -r ${imgInfo}
 done
