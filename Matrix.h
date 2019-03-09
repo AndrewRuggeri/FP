@@ -26,7 +26,7 @@ public:
     * @param width_ width of matrix, in units of fieldSize
     * @param fieldSize field size in bytes, default 1
     */
-    Matrix(uint32_t height_, uint32_t width_);
+    Matrix(uint32_t width_, uint32_t height_);
     
     
     /**
