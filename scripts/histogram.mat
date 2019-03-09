@@ -1,0 +1,21 @@
+#! /usr/bin/octave -qf
+
+# Creates a histogram plot from a provided file
+# argument 1 : image file
+# argument 2 : histogram plot image output
+
+arg_list = argv();
+printf("Creating Histogram for: %s\n", argv{1});
+clf();
+I = imread(arg_list{1});
+hist(I(:), 256);
+xlim([0 255]);
+[path, name, ext] = fileparts(arg_list{1});
+titleString = strcat('Histogram : ', strrep(name, '_', '-'));
+printf(titleString);
+title(titleString, 'FontSize', 18);
+xlabel('Pixel Value', 'FontSize', 18);
+ylabel('Pixel Frequency', 'FontSize', 18);
+grid on;
+set(gcf,'position',[20,20,600,800]);
+saveas(1, arg_list{2});
