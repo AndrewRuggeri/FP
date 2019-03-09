@@ -64,15 +64,6 @@ public:
 
 	void setMax(T max) { maxValue = max; }
 
-
-	/**
-	* @brief return value at provided location
-	*
-	* @param x column/width value
-	* @param y row/height value
-	* @return uint8_t returned valued at requested position
-	*/
-	T getValue(uint32_t x, uint32_t y);
     
     // Added for testing, should be removed, bad idea.
     void setValue(uint8_t* newData);
@@ -136,14 +127,6 @@ T Matrix<T>::getValue(uint32_t x, uint32_t y, bool* success) {
 
 	return value;
 }
-
-
-template <class T>
-T Matrix<T>::getValue(uint32_t x, uint32_t y) {
-	bool temp;
-	return getValue(x, y, &temp);
-}
-
 
 
 template <class T>

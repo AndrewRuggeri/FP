@@ -48,6 +48,7 @@ namespace Filter {
 template <class N, class T>
 Matrix<N> Filter::Convolution(Matrix<T> img, Kernel kernel) {
 
+	bool tempbool;	// reduces the need for an additional stack frame from from getValue(,) to getValue(,,)
 	uint32_t height = img.getHeight();
 	uint32_t width = img.getWidth();
 
@@ -84,8 +85,7 @@ Matrix<N> Filter::Convolution(Matrix<T> img, Kernel kernel) {
 					// ignore input samples which are out of bound
 					if (ii >= 0 && ii < width && jj >= 0 && jj < height) {
 
-						int32_t testValue = img.getValue(ii, jj) * kernel.getValue(mm, nn);
-
+						int32_t testValue = img.getValue(ii, jj, &tempbool) * kernel.getValue(mm, nn, &tempbool);
 						outputData[imageIndex] += testValue;
 					}
 				}
@@ -112,6 +112,7 @@ Matrix<N> Filter::Convolution(Matrix<T> img, Kernel kernel) {
 template<class T>
 Matrix<T> Filter::Median(Matrix<T> matrix) {
 
+	bool tempbool;	// reduces the need for an additional stack frame from from getValue(,) to getValue(,,)
 	int32_t width = matrix.getWidth();
 	int32_t height = matrix.getHeight();
 
@@ -137,7 +138,7 @@ Matrix<T> Filter::Median(Matrix<T> matrix) {
 
 					if (xNeig >= 0 && xNeig < matrix.getWidth() &&
 						yNeig >= 0 && yNeig < matrix.getHeight()) {
-						list[listIndex] = matrix.getValue(xNeig, yNeig);
+						list[listIndex] = matrix.getValue(xNeig, yNeig, &tempbool);
 						listIndex++;
 					}
 
@@ -175,7 +176,6 @@ Matrix<N> Filter::Normalize(Matrix<T> matrix) {
 	int32_t normMin = std::numeric_limits<N>::min();
 	int32_t normMax = std::numeric_limits<N>::max();
 	int32_t normRange = normMax - normMin;
-
 
 	T inMax = matrix.getMax();
 	T inMin = matrix.getMin();
