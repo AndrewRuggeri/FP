@@ -12,7 +12,6 @@ hist(I(:), 256);
 xlim([0 255]);
 [path, name, ext] = fileparts(arg_list{1});
 titleString = strcat('Histogram : ', strrep(name, '_', '-'));
-printf(titleString);
 title(titleString, 'FontSize', 18);
 xlabel('Pixel Value', 'FontSize', 18);
 ylabel('Pixel Frequency', 'FontSize', 18);
