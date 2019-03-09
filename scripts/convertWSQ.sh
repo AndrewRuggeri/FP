@@ -2,6 +2,7 @@
 
 # Convert fingerprint images from into wsq format using NBIS's cwsq
 # Arg1 : directory of 'raw' images
+# Arg2 : output director for 'wsq' files
 
 #cwsq .75 wsq $FILE -r width,height,8
 
@@ -13,3 +14,4 @@ for file in ${1}/*.*; do
     echo " File: ${file} : ${imgInfo}"
     cwsq 2.25 wsq ${file} -r ${imgInfo}
 done
+mv ${1}/*.wsq ${2} 

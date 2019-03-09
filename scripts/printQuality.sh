@@ -11,6 +11,6 @@ echo "name,rate" > ${2}
 
 for file in ${1}/*.wsq; do
     result=$(nfiq ${file})
-    echo "${file},${result}" >> ${2}
+    echo "$(basename ${file}),${result}" >> ${2}
     echo " File: ${file} : ${result}"
 done
