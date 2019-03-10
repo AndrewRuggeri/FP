@@ -10,5 +10,5 @@ echo "Output directory is ${2}"
 for file in ${1}/*.wsq; do
     echo " File: ${file}"
     name="$(basename ${file})"  # get filename
-    mindtct -b -m1 ${file} ${2}/${name%.*}
+    mindtct -m1 ${file} ${2}/${name%.*}
 done
