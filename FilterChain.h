@@ -39,10 +39,10 @@ Matrix<uint8_t> FilterChain::Unsharpen(Image image) {
 
 
 
-    Matrix<uint8_t> median = Filter::Median<uint8_t>(image);
+    //Matrix<uint8_t> median = Filter::Median<uint8_t>(image);
 
-    Matrix<int32_t> blur = Filter::Convolution<int32_t>(median, KernelGaussBlur);
-    Matrix<uint8_t> blurNo = Filter::Normalize<uint8_t, int32_t>(blur);
+    Matrix<int16_t> blur = Filter::Convolution<int16_t>(image, KernelGaussBlur);
+    Matrix<uint8_t> blurNo = Filter::Normalize<uint8_t, int16_t>(blur);
 
     Matrix<int16_t> sub = Filter::Subtract<int16_t, uint8_t, uint8_t>(image, blurNo);
 
