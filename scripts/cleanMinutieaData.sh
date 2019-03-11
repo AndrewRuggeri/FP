@@ -7,8 +7,13 @@
 echo "Checking files in ${1}"
 echo "Output file is ${2}"
 
-echo "value, match_from, match_to" > ${2}
-echo "SetName, TrueMatch, falseMatch" > condensed_${2}
+defaultCSV=${2}.csv
+condensedCSV=${2}_condensed.csv
+
+totalTP=0
+totalFP=0
+echo "value, match_from, match_to" > ${defaultCSV}
+echo "SetName, TrueMatch, falseMatch" > ${condensedCSV}
 for file in ${1}/*.txt; do
     echo " File: ${file}"
     
@@ -18,7 +23,7 @@ for file in ${1}/*.txt; do
     while IFS= read -r var
     do
         stringArray=($var)
-        echo "${stringArray[0]}, $(basename ${stringArray[1]}), $(basename ${stringArray[2]})"  >> ${2}
+        echo "${stringArray[0]}, $(basename ${stringArray[1]}), $(basename ${stringArray[2]})"  >> ${defaultCSV}
         
         matchPrintName=$(basename ${stringArray[1]})
         matchPrintSeries=${matchPrintName:0:4}
@@ -35,11 +40,33 @@ for file in ${1}/*.txt; do
         fi
         
     done < $file
-    
-    echo "${name},${trueMatch},${falseMatch}"  >> condensed_${2}
-  
-    
-    echo "" >> ${2}
+
+    totalTP=$((totalTP + trueMatch))
+    totalFP=$((totalFP + falseMatch))
+
+    echo "${name},${trueMatch},${falseMatch}"  >> ${condensedCSV}
+    echo "" >> ${defaultCSV}
+
 done
 
+
+echo "" >> ${condensedCSV}
+echo "TP,TN,FP,FN" >> ${condensedCSV}
+
+# For Average it's a divid by 10
+totalTN=$((720-totalFP))
+totalFN=$((80-totalTP))
+echo "${totalTP},${totalTN},${totalFP},${totalFN}" >> ${condensedCSV}
+
+# Values
+echo "" >> ${condensedCSV}
+
+accuracy=$( echo "(${totalTP} + ${totalTN}) / 800" | bc -l)
+echo "Accuracy, ${accuracy}" >> ${condensedCSV}
+
+tpr=$( echo "${totalTP} / 80" | bc -l)
+echo "TPR, ${tpr}" >> ${condensedCSV}
+
+fpr=$( echo "${totalFP} / 720" | bc -l)
+echo "FPR, ${fpr}" >> ${condensedCSV}
 
